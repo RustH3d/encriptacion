@@ -1,0 +1,23 @@
+{
+  "name": "node-crypto",
+  "version": "1.0.0",
+  "description": "crypto, 加密",
+  "main": "crypto.js",
+  "scripts": {
+    "test": "node test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gavinning/node-crypto.git"
+  },
+  "keywords": [
+    "crypto",
+    "加密"
+  ],
+  "author": "gavinning",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gavinning/node-crypto/issues"
+  },
+  "homepage": "https://github.com/gavinning/node-crypto#readme"
+}

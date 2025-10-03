@@ -1,9 +1,9 @@
 //
-
+//
 const express= require('express')
 const app= express()
 const PORT= 3000
-const express = require("express");
+
 const multer = require("multer");
 const fs = require("fs");
 const axios = require("axios");
