@@ -7,58 +7,55 @@ const fs = require("fs");
 const axios= require("axios")
 const forge = require("node-forge");
 const crypto = require("crypto");
+const { buffer } = require('stream/consumers')
 
-const SAVE_FOLDER= "decrypted_files"
+const upload= multer({dest:"/uploads"})
 
-fs.mkdirSync(SAVE_FOLDER,{recursive:true})
+const SAVE_FOLDER = path.join(__dirname, "decrypted_files");
+if (!fs.existsSync(SAVE_FOLDER)) fs.mkdirSync(SAVE_FOLDER);
 
-const PRIVATE_KEY_PATH= "keys/receiver_private.pem"
-const privatePem= fs.readFileSync(PRIVATE_KEY_PATH,"utf-8")
-const privateKey= forge.pki.privateKeyFromPem(privatePem)
+const privateKey= fs.readFileSync(
+    path.join(__dirname,"keys","receiver_private.pem"),"utf-8"
+)
 
-app.post("/receive", upload.single([
-    { name: "file_encrypted" },
-  { name: "key_encrypted" },
-  { name: "iv" },
-  { name: "tag" },
-  { name: "filename" }
-]),(req,res)=>{
+app.post("/receive",upload.single("file_encrypted"),(req,res)=>{
     try {
-    const fileEncrypted= req.files["file_encrypted"][0].buffer
-    const keyEncrypted=req.files["key_encrypted"][0].buffer
-    const iv= req.files["iv"][0].buffer
-    const filename=  req.body.filename|| "output.bin"
+    const fileEncryoted= fs.readFileSync(req.file.path)
+    
+    const keyEncrypted= Buffer.from(req.body.key_encrypted,"base64")
+    const iv= Buffer.from(req.body.iv,"base64")
+    const tag= Buffer.from(req.body.tag,"base64")
+    const filename= req.body.filename|| "output.bin"
 
-
-    const aesKey= Buffer.from(privateKey.decrypt(
-        keyEncrypted.toString("binary"),
-        "RSA-OAEP",
-        {md:forge.md.sha256.create(),mgfe1:{md:forge.md.sha256.create()}}
-    ),"binary")
-
+    const aesKey= crypto.privateDecrypt({
+        key: privateKey,
+        padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
+        oaephash: "sha256"
+    }, keyEncrypted)
 
     const decipher= crypto.createDecipheriv("aes-256-gcm",aesKey,iv)
     decipher.setAuthTag(tag)
-    const decrypted= buffer.concat([decipher.update(fileEncrypted),decipher.final()])
+
+    const decrypted= Buffer.concat([
+        decipher.update(fileEncryoted),
+        decipher.final()
+    ])
+
 
     const safeName= path.basename(filename)
     const outPath= path.join(SAVE_FOLDER,safeName)
+
     fs.writeFileSync(outPath,decrypted)
-    res.json({ detail: "Archivo descifrado y guardado", saved_as: outPath });
+
+    res.json({ detail: "✅ Archivo descifrado y guardado", saved_as: outPath });
     } catch (error) {
-         console.error(err);
-    res.status(500).json({ error: "Error descifrando archivo", message: err.message });
+        console.error("❌ Error al descifrar:", err);
+    res
+      .status(500)
+      .json({ error: "Error descifrando archivo", message: err.message });
     }
-} )
-
-app.get("/files",(req,res)=>{
-    const files= fs.readdirSync(SAVE_FOLDER).map(fn=>{
-        const fp= path.join(SAVE_FOLDER,fn)
-        return {filename: fn, size: fs.statSync(fp).size}
-    })
-
-    res.json(files)
 })
+
 
 app.listen(PORT, ()=>{
       console.log(`Receptor corriendo en puerto http://127.0.0.1:${PORT}`)
