@@ -11,7 +11,7 @@ const { buffer } = require('stream/consumers')
 
 const upload= multer({dest:"/uploads"})
 
-const SAVE_FOLDER = path.join(__dirname, "decrypted_files");
+const SAVE_FOLDER = path.join(__dirname, "decrypted_files"); //no hacer esto
 if (!fs.existsSync(SAVE_FOLDER)) fs.mkdirSync(SAVE_FOLDER);
 
 const privateKey= fs.readFileSync(

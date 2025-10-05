@@ -1,0 +1,9 @@
+CREATE TABLE file_records (
+  id SERIAL PRIMARY KEY,
+  filename TEXT NOT NULL,
+  iv TEXT NOT NULL,
+  tag TEXT NOT NULL,
+  key_encrypted TEXT NOT NULL,
+  file_encrypted BYTEA NOT NULL,
+  created_at TIMESTAMP DEFAULT NOW()
+);
