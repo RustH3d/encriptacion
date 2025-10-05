@@ -9,6 +9,7 @@ const fs = require("fs");
 const axios = require("axios");
 const forge = require("node-forge");
 const crypto = require("crypto");
+const { buffer } = require('stream/consumers');
 
 const upload= multer({dest:'uploads/'})
 
@@ -22,67 +23,43 @@ const receiverPublicKey= forge.pki.publicKeyFromPem(receiverPublicPem)
 
 app.post("/upload",upload.single('file'),async(req,res)=>{
     try {
-        const filePath= req.file.path
-        const filename= req.file.originalname
-        const data = fs.readFileSync(filePath);
 
-        const aesKey= crypto.randomBytes(32)
-        const iv= crypto.randomBytes(12)
+        const fileBuffer= req.file.buffer
+        
+        const aeskey= crypto.randomBytes(32)
+        const iv= crypto.randomBytes(16)
 
-
-
-        const cipher= crypto.createCipheriv("aes-256-gcm",aesKey,iv)
-        const encrypted= Buffer.concat([cipher.update(data),cipher.final()])
-        const tag= cipher.getAuthTag()
+        const cipher= crypto.createCipheriv("aes-256-gcm",aeskey,iv)
+        const encryptedFile= Buffer.concat([cipher.update(fileBuffer),cipher.final()])
+        const tag=cipher.getAuthTag()
 
 
+        const keyEncrypted= receiverPublicKey.encrypt(aeskey.toString("binary"),"RSA-OAEP",{
+            md: forge.md.sha256.create(),
+            mgf1:{md: forge.md.sha256.create()}
+        })
 
-        const encryptedKey= Buffer.from(
-            receiverPublicKey.encrypt(aesKey.toString("binary"),"RSA-OAEP",{
-                md: forge.md.sha256.create(),
-                mgf1: {md:forge.md.sha256.create()}
-            }),
-            "binary"
-        )
+        const formData= new FormData()
+        formData.append("file_encrypted",encryptedFile,"encrypted.bin")
+        formData.append("key_encrypted",Buffer.from(keyEncrypted,"binary"),"key.bin")
+        formData.append("iv",iv,"iv.bin")
+        formData.append("tag",tag,"tag.bin")
+        formData.append("filename",req.file.originalname)
+
+        const response= await  axios.post(RECEIVER_URL,formData,{
+            headers: formData.getHeaders()
+        })
 
 
-        const formData={
-            file_encrypted:{
-                value: encrypted,
-                options: {fileName: "enc_"+fileName, contentType:"application/octet-stream"},
-            },
-            key_encrypted:{
-                value: encryptedKey,
-                options: {fileName: "key.bin", contentType:"application/octet-stream"},
-            },
-            iv:{
-                value: iv,
-                options: {fileName: "iv.bin", contentType:"application/octet-stream"},
-            },
-            tag:{
-                value:tag,
-                options: {fileName: "tag.bin", contentType:"application/octet-stream"},
-                
-            },
-            filename:filename,
-        }
-
-        const FormData= require("form-data")
-        const form= new FormData()
-        for(let k in formData){
-            if(typeof formData[k]==='string'){
-                form.append(k,formData[k])
-            }else{
-                form.append(k,formData[k].value,formData[k].options)
-            }
-        }
-
-        const resp= await axios.post(RECEIVER_URL,form,{headers: form.getHeaders()})
-
-        res.json({detail:"Archivo cifrado y enviado",receiver_response:resp.data})
+        res.json({
+        message: "Archivo cifrado y enviado correctamente",
+        receptor: RECEIVER_URL,
+        receptorResponse: response.data,
+        });
+       
     } catch (error){
-        console.error
-      res.status(500).json({ error: "Error al procesar archivo", message: err.message });
+       console.error("❌ Error al enviar archivo:", error);
+    res.status(500).json({ error: "Error cifrando o enviando archivo" });
     }
     
 })
