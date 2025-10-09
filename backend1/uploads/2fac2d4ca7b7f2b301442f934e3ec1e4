@@ -1,0 +1,87 @@
+- POO: Es una rama de la programacion orientada a hacer el codigo de maneras ma entendible, y que pueda ser
+reutilizado en otros programas.
+
+-Objetos: Es eso mismo, son objetos. Y estos mismos tienen propiedades (atributos) y comportamiento (metodos).
+En este caso los metodos vendrian siendo el comportamiento que sigue el objeto. Por ej: Un auto, sus atributos
+podrian ser; la marca, color, kilometraje, etc. Mientras que sus metodos pueden ser; arrancar, frenar, etc.
+Creamos los objetos instanciando los distintos atribustos y metodos de los mismo. Para instanciar mediante el metodo
+constructor (crear ibjeto y darle los valores). Al crear un objeto usando un punto al final del mismo (ej carro.color) 
+podemos acceder a sus atributos.
+
+-Clases: Se conocen como clases a un conjunto de objeto que comparte caracteristicas. Por ejemplo,
+tomando como base el objeto carro, estos tienen una marca, un color y un kilometraje. Pero un carro puede ser chevrolet,
+azul y 0 km, y otro puede kia negro, y 50km. Ambos siguen la misma plantilla de tener color, marca y kilometraje. Asi como
+tienen los mismos metodos.
+
+-Encapsulacion: Se le conoce como encapsulacion cuando hacemos privada a una caracteristica o un metodo. Esto con el fin
+de que no puedan ser modificados desde afuera, y no sean alteradas por error del programador. Al encapsularlos hacemos que
+solo puedan ser modificados desde dentro la propia clase donde estan contenidos. Si encapsulamos un metodos, podemos crear
+metodos para acceder y modificar a los atributos. (get para acceder, set para modificar)
+
+-Herencia: En caso de haber un objeto este debe ser capaz de poder reutilizado y modificado a convenienvia en otros codigos.
+Ej: Si creamos el objeto personaje, y queremos crear un mago y un herrero usaremos el objeto personaje para crearlos y luego
+se les haran ciertas modificaciones dependiendo de las caracteristicas que los personajes requiern.
+
+-Polimorfismo: Se refiere a que un metodo pueda ser diferente dependiendo de la clase que lo use. En eñl ejemplo del videojuego
+todos los personajes atacan, la clase personaje ataca con las manos, la clase guerrero atacara y aumentara el daño
+dependiendo del arma que porte, y el mago puede aumentar el daño que hace con los libros que usa gracias a a estadis
+tica inteligencia. El metodo hara un calculo distinto dependiendo de que personaje usemos.
+
+-Modularizacion: Se trata de enlistar y agrupar una serie de instrucciones que
+cumpliran una instruccion especifica.
+
+-Metodo constructor: Es el metodo mediante el cual instanciaremos la clase que queramos crear. Se encarga de iniciar las
+variables de la misma e iniciar algunos metodos. Estos pueden tener parametros o no. Ej cons (Persona p1= new Persona).
+Se suelen declarar como publicos, tienen el mismo nombre de la clase y no pueden devolver ningun valor.
+
+-Parametros y argumentos: un parametro es la declaracion o una variable de un objeto. Mientras que un argumento es 
+un valor que envia el metodo. El parametro se pone en la declaracion del metodo (public void metodo (int a, string b).
+Mientras que un argumento se pone en la invocacion del meto objeto.metodo(1, "hola").
+
+-Retorno de valores:Estos son metodos que SI nos van a devolver algo. (public Int sumar (int a, int b))
+Se distinguen de los que no retornan por que usan una variable (int, double, string, etc) en lugra de void. Al final
+se debe usar return para que devuelva lo que tenga. Para enviarle parametros: int suma= objetos.sumar (5,4).
+
+- Setters y Getters: Son metodos que nos permiten acceder a una clase, estos se encapsulan de manera privada
+esto para establecer y obtener datos de los atributos encapsulados.
+
+El setter se una para asignarle un valor a cualquiera de los atributos de la clase. Esto lo hace directamente, ya que
+no retorna nada tiene void en su estructura. Y siempre debe recibir un parametro.
+
+El getter por otro lado, accede a la clase para retornarnos algun valor que tenga un atributo. Ya que este si retorna algo
+el mismo debe contener el tipo de dato que queramos que nos regrese en la estructura. 
+
+-FINAL: Es un metodo que al momento de añadirselo a una clase, no va a permitir que clases que creemos 
+luego puedan heredar datos de la clase a la que agregamos el FINAL. Esto tambien se lo podriamos aplicar a un objeto en 
+alguna de sus caracteristicas.
+
+-STATIC: Es un modificador. Al momento de instanciar un objeto, a cada uno se le asigna una copia de los atributos que lo
+conforman, estas copias son diferentes. Lo que hace el modificador Static es hacer que los atributos ya no
+le pertenezcan al objeto, sino a la clase, y hara que en todos los objetos, el atributo a la que le
+añadimos Static sea igual en todos. Tambien hace que no podamos usar ningun objeto
+
+-Sobrecarga de Constructores: Esto se basa en la idea en que podemos tener varios constructores con el mismo nombre, pero
+funcionaran de maneras distintas, dependiendo de como los hagamos pueden tener distintos datos. Por ejemplo,
+tendriamos 2 constructores de empleado, al momento de recibir los datos el primero recibe el nombre, sueldo, fecha de alta,
+y cualquier otro dato que vayamos a ingresar. Pero el segundo al momento de crear el constructor ya definimos el sueldo y la fecha
+de alta dentro del mismo, por lo que al crear el objeto solo tendremos que enviarle el nombre. Asi tenemos dos constructores que tienen los
+mismos atributos, pero funcionan de manera distinta.
+
+-Polimorfismo: Esto se basa en el principio de sustitucion, las variables se pueden comportar de manera diferente, es decir son polimorficas.
+En una relacion de herencia una superclase puede almacenar un objeto en una de sus subclases, es decir es compatible con las clases que derivan de ella.
+Un ejemplo de esto es la clase Jefatura, esta hereda los atributos de la clase empleado, en cosas como el nombre y la fecha de alta se comporta exactamente igual,
+pero en el sueldo se hace una modificacion ya que el jefe tiene un incentivo en su sueldo, al momento
+de instanciarlo podremos introducirlo entre las instancias de Empleado sin problemas. Ahi entra en accion el polimorfismo.
+
+-Enlazado Dinamico: Se trata de asignarle un mensaje a un metodo en especifico en la clase que lo va a recibir
+en enlazado dinamico se basa en el tipo del valor.
+
+-Casting de objetos: Es basicamento convertir un objeto de un tipo en otro tipo. Siempre y cuando estos mismos sean compatibles. Esto se hace estableciendo el tipo de objeto y la variable a la que cambiaremos
+la variable vieja, haciendo que sea igual al tipo de objeto (entre parentesis) y el nombre de la variable vieja que sera cambiada.
+
+-Clases y Metodos FINAL: Como ya se dijo antes el modificador FINAL se va a encargar de restringir de que no se pueda heredar
+de la clase a la que se lo añadimos. Al añadirlo a una clase, no va a poder haber subclases que tengan herencia de la clase padre.
+Pero en el caso de los metodos, se va a encargar de que los atributos a los que afecta sean exactamente iguales.
+
+ -Instancia: Es el acto de materializar una clase, vendrian siendo objetoss con sus propios atributos, metodos, etc.
+

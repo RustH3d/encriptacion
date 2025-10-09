@@ -10,8 +10,8 @@ const axios = require("axios");
 const forge = require("node-forge");
 const crypto = require("crypto");
 const { buffer } = require('stream/consumers');
-
-const upload= multer({dest:'uploads/'})
+const FormData= require("form-data")
+const upload= multer({storage: multer.memoryStorage()})
 
 const RECEIVER_URL= 'http://127.0.0.1:3001/receive'
 const RECEIVER_PUBKEY_PATH= 'keys/receiver_public.pem'
@@ -19,6 +19,8 @@ const RECEIVER_PUBKEY_PATH= 'keys/receiver_public.pem'
 
 const receiverPublicPem= fs.readFileSync(RECEIVER_PUBKEY_PATH,'utf8')
 const receiverPublicKey= forge.pki.publicKeyFromPem(receiverPublicPem)
+
+
 
 
 app.post("/upload",upload.single('file'),async(req,res)=>{
@@ -33,17 +35,20 @@ app.post("/upload",upload.single('file'),async(req,res)=>{
         const encryptedFile= Buffer.concat([cipher.update(fileBuffer),cipher.final()])
         const tag=cipher.getAuthTag()
 
+        const keyEncrypted = receiverPublicKey.encrypt(aeskey.toString("binary"), "RSA-OAEP", {
+      md: forge.md.sha256.create(),
+      mgf1: { md: forge.md.sha256.create() }
+    });
 
-        const keyEncrypted= receiverPublicKey.encrypt(aeskey.toString("binary"),"RSA-OAEP",{
-            md: forge.md.sha256.create(),
-            mgf1:{md: forge.md.sha256.create()}
-        })
+        const keyEncryptedBase64 = forge.util.encode64(keyEncrypted);
+        const ivBase64 = iv.toString("base64");
+    const tagBase64 = tag.toString("base64");
 
         const formData= new FormData()
-        formData.append("file_encrypted",encryptedFile,"encrypted.bin")
-        formData.append("key_encrypted",Buffer.from(keyEncrypted,"binary"),"key.bin")
-        formData.append("iv",iv,"iv.bin")
-        formData.append("tag",tag,"tag.bin")
+        formData.append("file_encrypted", encryptedFile, req.file.originalname + ".enc")
+        formData.append("key_encrypted",keyEncryptedBase64)
+        formData.append("iv",ivBase64)
+        formData.append("tag",tagBase64)
         formData.append("filename",req.file.originalname)
 
         const response= await  axios.post(RECEIVER_URL,formData,{
