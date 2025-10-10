@@ -1,0 +1,16 @@
+CREATE TABLE file_records (
+  id SERIAL PRIMARY KEY,
+  filename TEXT NOT NULL,
+  iv TEXT NOT NULL,
+  tag TEXT NOT NULL,
+  key_encrypted TEXT NOT NULL,
+  file_encrypted BYTEA NOT NULL,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+
+ cuando cree n la base de datos metan esta query
+ALTER TABLE file_records
+ALTER COLUMN file_encrypted TYPE BYTEA USING file_encrypted::bytea,
+ALTER COLUMN iv TYPE BYTEA USING iv::bytea,
+ALTER COLUMN tag TYPE BYTEA USING tag::bytea;
