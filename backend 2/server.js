@@ -8,6 +8,7 @@ const crypto = require('crypto');
 const { Pool } = require('pg');
 const forge = require('node-forge');
 const PORT= 3001
+//app.use(express.static(path.join(__dirname, "public")))
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
