@@ -35,7 +35,7 @@ function UploadFile() {
     setEstado("");
 
     const formData = new FormData();
-    formData.append("archivo", archivo);
+    formData.append("file", archivo);
 
     try {
       const res = await fetch("/upload", {
@@ -60,11 +60,7 @@ function UploadFile() {
     <div style={estilos.contenedor}>
       <h2>Subir archivo al emisor</h2>
 
-      <p style={{ color: receptorActivo ? "green" : "red" }}>
-        {receptorActivo
-          ? "✅ Conexión establecida con el receptor"
-          : "❌ Receptor no disponible"}
-      </p>
+    
 
       <input type="file" onChange={handleArchivo} />
       {archivo && <p>Archivo seleccionado: {archivo.name}</p>}

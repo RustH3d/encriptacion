@@ -51,7 +51,7 @@ const pool = new Pool({
   user: "postgres",
   host: "localhost",
   database: "encriptacion",
-  password: "bionicle2006", // cambia si tu contraseña es diferente
+  password: "L1nk3d", // cambia si tu contraseña es diferente
   port: 5432,
 });
 
